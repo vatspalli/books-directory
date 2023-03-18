@@ -4,22 +4,56 @@ getBooksList();
 function getBooksList() {
   const cUrl = sUrl + "/getBooks";
   fetch(cUrl)
-  .then(oResponse => 
-    oResponse.json()
-  )
-  .then((data) => {
-    var booksTable = document.getElementById("books");
-    data.forEach((element,index) => {
-      let row = booksTable.insertRow(-1);
-      let cell0 = row.insertCell(0);
-      let cell1 = row.insertCell(1);
-      let cell2 = row.insertCell(2);
-      let cell3 = row.insertCell(3);
-      cell0.innerHTML = index+1;
-      cell1.innerHTML = element.title;
-      cell2.innerHTML = element.author;
-      cell3.innerHTML = element.country;
+    .then((oResponse) => oResponse.json())
+    .then((data) => {
+      var booksTable = document.getElementById("books");
+      data.forEach((element, index) => {
+        let row = booksTable.insertRow(-1);
+        row.id = `row${index + 1}`;
+        let cell0 = row.insertCell(0);
+        cell0.classList.add("snoClass");
+        let cell1 = row.insertCell(1);
+        cell1.innerHTML = element.title;
+        let cell2 = row.insertCell(2);
+        cell2.innerHTML = element.author;
+        let cell3 = row.insertCell(3);
+        cell3.innerHTML = element.country;
+        let cell4 = row.insertCell(4);
+        let _button = document.createElement("button");
+        _button.onclick = () => deleteBook(_button);
+        _button.innerHTML = `Delete`;
+        cell4.appendChild(_button);
+      });
+      generateSerialNos();
     });
-    console.log(data);
+}
+
+function deleteBook(element) {
+  const cUrl = sUrl + "/deleteBook";
+  const row = element.parentElement?.parentElement;
+  const bookName = row.childNodes[1].innerHTML;
+  const headers = {'Content-Type': 'application/json'};
+  const payload = {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({
+      name: bookName,
+    })
+  };
+  fetch(cUrl, payload)
+    .then((oResponse) => {
+      oResponse.json();
+    })
+    .then((res) => {
+      console.log(res);
+    });
+  row.remove();
+  generateSerialNos();
+}
+
+function generateSerialNos() {
+  const elements = document.querySelectorAll(`.snoClass`);
+  elements.forEach((element, index) => {
+    element.innerHTML = `${index + 1}`;
   });
 }
