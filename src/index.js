@@ -1,5 +1,6 @@
-const sUrl = "http://127.0.0.1:3000";
-getBooksList();
+const sUrl = "http://127.0.0.1:3000"; // end point
+let booksCount = 0; // to show total book count on webpage
+getBooksList(); // on opening first page
 
 function getBooksList() {
   const cUrl = sUrl + "/getBooks";
@@ -25,6 +26,7 @@ function getBooksList() {
         cell4.appendChild(_button);
       });
       generateSerialNos();
+      setBooksCount();
     });
 }
 
@@ -49,6 +51,8 @@ function deleteBook(element) {
     });
   row.remove();
   generateSerialNos();
+  booksCount--;
+  setBooksCount();
 }
 
 function generateSerialNos() {
@@ -56,4 +60,10 @@ function generateSerialNos() {
   elements.forEach((element, index) => {
     element.innerHTML = `${index + 1}`;
   });
+  booksCount = elements.length
+}
+
+function setBooksCount() {
+  let countElement = document.getElementById('count');
+  countElement.innerHTML = `${booksCount}`
 }
