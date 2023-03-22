@@ -10,7 +10,6 @@ function getBooksList() {
       var booksTable = document.getElementById("books");
       data.forEach((element, index) => {
         let row = booksTable.insertRow(-1);
-        row.id = `row${index + 1}`;
         let cell0 = row.insertCell(0);
         cell0.classList.add("snoClass");
         let cell1 = row.insertCell(1);
@@ -47,7 +46,7 @@ function deleteBook(element) {
       oResponse.json();
     })
     .then((res) => {
-      console.log(res);
+      console(res?.status);
     });
   row.remove();
   generateSerialNos();

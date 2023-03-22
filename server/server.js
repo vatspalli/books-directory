@@ -34,6 +34,17 @@ app.post("/deleteBook", async (req, res) => {
   res.send({status: 'Success'});
 });
 
+app.post("/addBook", async (req, res) => {
+  const reqBody = req.body;
+  const book = reqBody.book;
+  const books = JSON.parse(
+    await readFile(new URL("../data/books.json", import.meta.url))
+  );
+  books.push(book);
+  writeFile(new URL("../data/books.json", import.meta.url), JSON.stringify(books));
+  res.send({status: 'Success'});
+})
+
 app.listen(port, () => {
   console.log("Listening on port 3000");
 });
