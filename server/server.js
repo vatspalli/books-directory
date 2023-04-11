@@ -15,10 +15,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.get("/getBooks", async (req, res) => {
-  const books = JSON.parse(
-    await readFile(new URL("../data/books.json", import.meta.url))
-  );
-  res.send(books);
+  try {
+    const books = JSON.parse(
+      await readFile(new URL("../data/books.json", import.meta.url))
+    );
+    res.status(200);
+    res.send(books);
+  } catch (error) {
+    const respError = JSON.parse(JSON.stringify(error));
+    respError.message = error?.message;
+    res.status(404);
+    res.send(respError);
+  }
 });
 
 app.post("/deleteBook", async (req, res) => {
@@ -37,12 +45,21 @@ app.post("/deleteBook", async (req, res) => {
 app.post("/addBook", async (req, res) => {
   const reqBody = req.body;
   const book = reqBody.book;
-  const books = JSON.parse(
-    await readFile(new URL("../data/books.json", import.meta.url))
-  );
-  books.push(book);
-  writeFile(new URL("../data/books.json", import.meta.url), JSON.stringify(books));
-  res.send({status: 'Success'});
+  const file = "../data/books.json";
+  try {
+    const books = JSON.parse(
+      await readFile(new URL(file, import.meta.url))
+    );
+    books.push(book);
+    writeFile(new URL(file, import.meta.url), JSON.stringify(books));
+    res.status(200);
+    res.send({status: 'Success'});
+  } catch (error) {
+    const respError = JSON.parse(JSON.stringify(error));
+    respError.message = error?.message;
+    res.status(404);
+    res.send(respError);
+  }
 })
 
 app.listen(port, () => {
