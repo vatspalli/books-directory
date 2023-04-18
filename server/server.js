@@ -32,14 +32,25 @@ app.get("/getBooks", async (req, res) => {
 app.post("/deleteBook", async (req, res) => {
   const reqBody = req.body;
   const bookName = reqBody.name;
-  const books = JSON.parse(
-    await readFile(new URL("../data/books.json", import.meta.url))
-  );
-  const newBooks = books.filter((element) => {
-    return element.title != bookName;
-  })
-  writeFile(new URL("../data/books.json", import.meta.url), JSON.stringify(newBooks));
-  res.send({status: 'Success'});
+  try {
+    const books = JSON.parse(
+      await readFile(new URL("../data/books.json", import.meta.url))
+    );
+    const newBooks = books.filter((element) => {
+      return element.title != bookName;
+    })
+    if(books.length === newBooks.length) {
+      throw new Error('No such book exists');
+    }
+    writeFile(new URL("../data/books.json", import.meta.url), JSON.stringify(newBooks));
+    res.status(200);
+    res.send({status: 'Success'});
+  } catch (error) {
+    const respError = JSON.parse(JSON.stringify(error));
+    respError.message = error?.message;
+    res.status(404);
+    res.send(respError);
+  }
 });
 
 app.post("/addBook", async (req, res) => {

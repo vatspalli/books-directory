@@ -60,7 +60,7 @@ async function getBooksList() {
   // });
 }
 
-function deleteBook(element) {
+async function deleteBook(element) {
   const cUrl = sUrl + "/deleteBook";
   const row = element.parentElement?.parentElement;
   const bookName = row.childNodes[1].innerHTML;
@@ -72,17 +72,25 @@ function deleteBook(element) {
       name: bookName,
     })
   };
-  fetch(cUrl, payload)
-    .then((oResponse) => {
-      oResponse.json();
-    })
-    .then((res) => {
-      console(res?.status);
-    });
-  row.remove();
-  generateSerialNos();
-  booksCount--;
-  setBooksCount();
+  const response = await fetch(cUrl, payload);
+  const status = response.status 
+  const res = await response.json();
+  if(status === 200) {
+    row.remove();
+    generateSerialNos();
+    booksCount--;
+    setBooksCount();
+  }
+  else {
+    alert(res.message);
+  }
+  // fetch(cUrl, payload)
+  //   .then((oResponse) => {
+  //     oResponse.json();
+  //   })
+  //   .then((res) => {
+  //     console(res?.status);
+  //   });
 }
 
 function generateSerialNos() {
